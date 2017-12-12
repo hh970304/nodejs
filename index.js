@@ -62,7 +62,12 @@ HTTP隧道技术就是把所有要传送的数据全部封装到HTTP协议里进
 
 
 
+//http代理：其功能就是代理网络用户去取得网络信息。形象的说：它是网络信息的中转站。
 
+代理服务器是介于浏览器和Web服务器之间的一台服务器，有了它之后，浏览器不是直接到Web服务器去取回网页而是向代理服务器发出请求，
+Request信号会先送到代理服务器，由代理服务器来取回浏览器所需要的信息并传送给你的浏览器。而且，大部分代理服务器都具有缓冲的功能，
+就好象一个大的Cache，它有很大的存储空间，它不断将新取得数据储存到它本机的存储器上，如果浏览器所请求的数据在它本机的存储器上已经存在而且是最新的，
+那么它就不重新从Web服务器取数据，而直接将存储器上的数据传送给用户的浏览器，这样就能显著提高浏览速度和效率。更重要的是：Proxy
 
 
 
@@ -91,6 +96,9 @@ function TunnelingAgent(options) {
 }
 util.inherits(TunnelingAgent, events.EventEmitter)
 
+
+//在原型上创建函数添加请求 函数功能：在一般情况下，我们使用网络浏览器直接去连接其他Internet
+                         站点取得网络信息时，须送出Request信号来得到回答，然后对方再把信息以bit方式传送回来。
 TunnelingAgent.prototype.addRequest = function addRequest(req, options) {
   var self = this
 
@@ -113,6 +121,9 @@ TunnelingAgent.prototype.addRequest = function addRequest(req, options) {
   self.createConnection({host: options.host, port: options.port, request: req})
 }
 
+
+
+//创建链接  新建到http服务器的链接
 TunnelingAgent.prototype.createConnection = function createConnection(pending) {
   var self = this
 
@@ -135,6 +146,8 @@ TunnelingAgent.prototype.createConnection = function createConnection(pending) {
   })
 }
 
+
+//创建套接字
 TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
   var self = this
   var placeholder = {}
@@ -202,6 +215,8 @@ TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
   }
 }
 
+
+//移除套接字
 TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
   var pos = this.sockets.indexOf(socket)
   if (pos === -1) return
@@ -216,6 +231,8 @@ TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
   }
 }
 
+
+//创建安全套接字
 function createSecureSocket(options, cb) {
   var self = this
   TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
