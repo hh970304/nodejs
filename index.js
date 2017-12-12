@@ -147,7 +147,8 @@ TunnelingAgent.prototype.createConnection = function createConnection(pending) {
 }
 
 
-//创建套接字
+//创建套接字，套接字，是支持TCP/IP的网络通信的基本操作单元，
+    可以看做是不同主机之间的进程进行双向通信的端点，简单的说就是通信的两方的一种约定，用套接字中的相关函数来完成通信过程。
 TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
   var self = this
   var placeholder = {}
@@ -174,19 +175,19 @@ TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
   connectReq.once('error', onError)
   connectReq.end()
 
-  function onResponse(res) {
+  function onResponse(res) {                              //回应
     // Very hacky. This is necessary to avoid http-parser leaks.
     res.upgrade = true
   }
 
-  function onUpgrade(res, socket, head) {
+  function onUpgrade(res, socket, head) {                    //上级
     // Hacky.
     process.nextTick(function() {
       onConnect(res, socket, head)
     })
   }
 
-  function onConnect(res, socket, head) {
+  function onConnect(res, socket, head) {                           //连接
     connectReq.removeAllListeners()
     socket.removeAllListeners()
 
@@ -232,7 +233,7 @@ TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
 }
 
 
-//创建安全套接字
+//创建安全套接字，套接字相当于打电话 建立连接 双方一致才能正常通信，保证私密性的安全协议
 function createSecureSocket(options, cb) {
   var self = this
   TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
@@ -247,7 +248,7 @@ function createSecureSocket(options, cb) {
   })
 }
 
-
+//合并选项
 function mergeOptions(target) {
   for (var i = 1, len = arguments.length; i < len; ++i) {
     var overrides = arguments[i]
