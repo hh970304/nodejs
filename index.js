@@ -1,4 +1,4 @@
-Index.js
+*Index.js
 
 
 'use strict'
