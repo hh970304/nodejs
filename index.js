@@ -14,13 +14,14 @@ var net = require('net')//引用net模块来实现TCP服务器与TCP客户端之
   , util = require('util') //引用util模块，提供常用函数的集合
   , Buffer = require('safe-buffer').Buffer//引用buffer模块，用于存储二进制数据
   ;
-
+HTTP隧道技术就是把所有要传送的数据全部封装到HTTP协议里进行传送，HTTP隧道技术几乎支持了所有的上网方式.
 exports.httpOverHttp = httpOverHttp//暴露自定义模块接口
 exports.httpsOverHttp = httpsOverHttp
 exports.httpOverHttps = httpOverHttps
 exports.httpsOverHttps = httpsOverHttps
 
-//定义函数功能 定义一个新的隧道代理响应http的请求
+//定义函数功能 定义一个新的隧道代理响应http的请求,并得到响应
+    http是超文本传输协议，https的http的安全通道 加入了ssl层
 function httpOverHttp(options) {   
   var agent = new TunnelingAgent(options)
   agent.request = http.request
@@ -97,7 +98,7 @@ function TunnelingAgent(options) {
 util.inherits(TunnelingAgent, events.EventEmitter)
 
 
-//在原型上创建函数添加请求 函数功能：在一般情况下，我们使用网络浏览器直接去连接其他Internet
+//在原型上创建函数添加请求 函数功能：使用网络浏览器直接去连接其他Internet
                          站点取得网络信息时，须送出Request信号来得到回答，然后对方再把信息以bit方式传送回来。
 TunnelingAgent.prototype.addRequest = function addRequest(req, options) {
   var self = this
@@ -160,7 +161,7 @@ TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
     , agent: false
     }
   )
-  if (connectOptions.proxyAuth) {
+  if (connectOptions.proxyAuth) {                                      //与代理服务器进行连接
     connectOptions.headers = connectOptions.headers || {}
     connectOptions.headers['Proxy-Authorization'] = 'Basic ' +
         Buffer.from(connectOptions.proxyAuth).toString('base64')
@@ -191,7 +192,7 @@ TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
     connectReq.removeAllListeners()
     socket.removeAllListeners()
 
-    if (res.statusCode === 200) {
+    if (res.statusCode === 200) {                               //通过http状态码查看响应是否成功
       assert.equal(head.length, 0)
       debug('tunneling connection has established')
       self.sockets[self.sockets.indexOf(placeholder)] = socket
@@ -204,7 +205,7 @@ TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
       self.removeSocket(placeholder)
     }
   }
-
+//错误处理函数
   function onError(cause) {
     connectReq.removeAllListeners()
 
@@ -248,7 +249,7 @@ function createSecureSocket(options, cb) {
   })
 }
 
-//合并选项
+//合并选项，功能是以子组件的选项为主 子组件不存在时，使用父组件的
 function mergeOptions(target) {
   for (var i = 1, len = arguments.length; i < len; ++i) {
     var overrides = arguments[i]
@@ -265,7 +266,7 @@ function mergeOptions(target) {
   return target
 }
 
-//错误处理
+//程序的调试函数
 
 var debug
 if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
